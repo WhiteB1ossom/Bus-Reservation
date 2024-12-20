@@ -1,50 +1,46 @@
+import java.awt.GridLayout;
+
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 
-import java.awt.FlowLayout;
-import java.awt.GridLayout;
-
 public class FinalTest extends JFrame {
-	
-    int index = 0;
-    String[] Num = new String[45]; // 숫자 배열
-    JButton[] Btn = new JButton[Num.length]; // 버튼 배열
-    JPanel BtnPanel1, BtnPanel2; //버튼 패널
+
+    JButton[] seats = new JButton[45]; // 45개의 좌석 버튼
+    JPanel seatPanel;
 
     FinalTest() {
-    	
-    	BtnPanel1 = new JPanel();
-    	BtnPanel2 = new JPanel();
+        seatPanel = new JPanel();
+        seatPanel.setLayout(new GridLayout(11, 5, 10, 10)); // 11행 5열로 설정 (좌석+통로)
 
-    	BtnPanel1.setLayout(new GridLayout(10, 4, 5, 5));
-        BtnPanel2.setLayout(new FlowLayout());
-    	
-        // 1~45까지 숫자를 배열에 저장
-        for (int i = 0; i < Num.length; i++) {
-            Num[i] = String.valueOf(i + 1); // 숫자를 문자열로 변환하여 배열에 저장
+        int seatNumber = 1;
+
+        // 좌석 배치
+        for (int row = 0; row < 10; row++) {
+            seatPanel.add(createSeatButton(seatNumber++)); // 왼쪽 좌석 1
+            seatPanel.add(createSeatButton(seatNumber++)); // 왼쪽 좌석 2
+            seatPanel.add(new JPanel()); // 통로 공간
+            seatPanel.add(createSeatButton(seatNumber++)); // 오른쪽 좌석 1
+            seatPanel.add(createSeatButton(seatNumber++)); // 오른쪽 좌석 2
         }
 
-        // 향상된 for문으로 버튼 생성 및 추가
-        for (int i = 0; i < Num.length; i++) {
-        	
-            Btn[i] = new JButton(Num[i]); // 버튼 생성 시 Num 배열의 값을 텍스트로 사용
-            
-            if (i < 40) {
-                BtnPanel1.add(Btn[i]); // 첫 번째 패널에 추가
-            } else {
-                BtnPanel2.add(Btn[i]); // 두 번째 패널에 추가
-            }
+        // 마지막 줄 좌석 5개 추가
+        for (int i = 0; i < 5; i++) {
+            seatPanel.add(createSeatButton(seatNumber++));
         }
 
-        // 패널 추가 및 프레임 설정
-        this.setLayout(new GridLayout(2, 1));
-        this.add(BtnPanel1);
-        this.add(BtnPanel2);
-        
-        this.setSize(400, 500);
+        // 프레임 설정
+        this.add(seatPanel);
+        this.setSize(600, 800);
         this.setDefaultCloseOperation(EXIT_ON_CLOSE);
         this.setVisible(true);
+    }
+
+    // 버튼 생성 메서드
+    private JButton createSeatButton(int number) {
+        JButton button = new JButton(number + "번");
+        // 버튼에 이벤트나 스타일을 추가할 수 있음
+        return button;
     }
 
     public static void main(String[] args) {
