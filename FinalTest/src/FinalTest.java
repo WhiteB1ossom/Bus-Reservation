@@ -6,6 +6,23 @@ import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 
+/**
+ * 버스 좌석 예약 시스템을 구현한 클래스입니다.
+ * GUI를 통해 좌석을 예약하거나 취소할 수 있으며, 예약 데이터를 파일에 저장하고 불러올 수 있습니다.
+ * 
+ * @author 2021011877 방 경식
+ * @version 1.0
+ * @since 2024-12-16
+ * 
+ * @created 2024-12-16
+ * 
+ * @changelog
+ * <ul>
+ *   <li>2024-12-16: 시스템 초기 구현</li>
+ *   <li>2024-12-21: 시스템 외관 구현</li>
+ * </ul>
+ */
+
 public class FinalTest extends JFrame {
 
     /** GUI 창 객체 **/
