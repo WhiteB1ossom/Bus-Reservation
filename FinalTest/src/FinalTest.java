@@ -18,7 +18,7 @@ import javax.swing.JPanel;
  * 
  * 	 <li>2024-12-16: 시스템 초기 구현</li>
  *   <li>2024-12-21: 시스템 외관 구현</li>
- *   <li>2024-12-22: 시스템 외관 업데이트 진행</li>
+ *   <li>2024-12-22: 시스템 외관 업데이트</li>
  */
 public class FinalTest {
 
