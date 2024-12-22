@@ -24,7 +24,7 @@ public class FinalTest {
 
     /** 총 좌석 수를 정의합니다. */
     private static final int TOTAL_SEATS = 45;
-
+    
     /** GUI 창 객체입니다. */
     private static JFrame frame;
 
