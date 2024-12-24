@@ -37,7 +37,7 @@ import javax.swing.JTextField;
  * </p>
  * 
  * @author 2021011877 방 경식
- * @version 1.4
+ * @version 1.4.1
  * @since 2024-12-16
  * 
  * @created 2024-12-16
@@ -53,9 +53,20 @@ import javax.swing.JTextField;
  *   <li>2024-12-24: 전화번호 입력 필드 추가 및 정보 입력 UI 개선</li>
  *   <li>2024-12-24: 예약 불러오기 기능 구현</li>
  *   <li>2024-12-24: 전체 배경 이미지 추가 및 UI 개선</li>
+ *   <li>2024-12-24: UTF-8 인코딩 지원 추가</li>
  * </ul>
- *   <li>2024-12-26: UTF-8 인코딩 지원 추가</li>
- * </ul>
+ * @see <a href="https://steffen-lee.tistory.com/27"> 전체적인 기능 참조</a>
+ * 
+ * @see <a href="https://dev-zephyr.tistory.com/8"> 예약 시스템 구축 참조링크1</a>
+ * @see <a href="https://cross-milestone.tistory.com/100"> 예약 시스템 구축 참조링크2</a>
+ * @see <a href="https://zombiecoder.tistory.com/10"> 예약 시스템 구축 참조링크3</a>
+ * 
+ * @see <a href="https://ming9mon.tistory.com/47"> GUI 업데이트 참조링크1</a>
+ * @see <a href="https://m.blog.naver.com/ddalgikhj/222098797984"> GUI 업데이트 참조링크2</a>
+ * 
+ * @see <a href="https://velog.io/@kkj53051000/JAVASwing-JFileChooser-%ED%8C%8C%EC%9D%BC-%EC%97%B4%EA%B8%B0%EC%B0%BD-%EA%B5%AC%ED%98%84-%EB%B0%8F-%EA%B2%BD%EB%A1%9C-%EC%B6%9C%EB%A0%A5"> 파일 저장 및 불러오기 기능 참조링크1</a>
+ * @see <a href="https://blog.naver.com/battledocho/220035925900">  파일 저장 및 불러오기 기능 참조링크2</a>
+ * 
  */
 public class FinalTest {
 
