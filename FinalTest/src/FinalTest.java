@@ -10,9 +10,11 @@ import java.awt.Insets;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileReader;
-import java.io.FileWriter;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -31,15 +33,17 @@ import javax.swing.JTextField;
  * 버스 좌석 예약 시스템
  * <p>
  * GUI를 통해 좌석을 예약하거나 취소할 수 있으며, 예약 데이터를 HashMap에 저장합니다.
+ *
  * </p>
  * 
  * @author 2021011877 방 경식
- * @version 1.3
+ * @version 1.4
  * @since 2024-12-16
  * 
  * @created 2024-12-16
  * 
  * @changelog
+ * <ul>
  * <ul>
  *   <li>2024-12-16: 시스템 초기 구현</li>
  *   <li>2024-12-21: 시스템 외관 구현</li>
@@ -49,6 +53,8 @@ import javax.swing.JTextField;
  *   <li>2024-12-24: 전화번호 입력 필드 추가 및 정보 입력 UI 개선</li>
  *   <li>2024-12-24: 예약 불러오기 기능 구현</li>
  *   <li>2024-12-24: 전체 배경 이미지 추가 및 UI 개선</li>
+ * </ul>
+ *   <li>2024-12-26: UTF-8 인코딩 지원 추가</li>
  * </ul>
  */
 public class FinalTest {
@@ -249,10 +255,10 @@ public class FinalTest {
     }
 
     /**
-     * 예약 데이터를 파일로 저장합니다.
+     * 예약 데이터를 UTF-8 형식으로 파일에 저장합니다.
      */
     private void saveReservationsToFile() {
-        try (BufferedWriter writer = new BufferedWriter(new FileWriter(FILE_NAME))) {
+        try (BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(FILE_NAME), "UTF-8"))) {
             for (Map.Entry<Integer, String> entry : reservations.entrySet()) {
                 String formattedData = String.format("좌석번호: %d, %s", entry.getKey(), entry.getValue());
                 writer.write(formattedData);
@@ -260,12 +266,12 @@ public class FinalTest {
             }
             JOptionPane.showMessageDialog(frame, "예약 정보가 저장되었습니다.");
         } catch (IOException e) {
-            JOptionPane.showMessageDialog(frame, "파일 저장 중 오류가 발생했습니다.");
+            JOptionPane.showMessageDialog(frame, "파일 저장 중 오류가 발생했습니다: " + e.getMessage());
         }
     }
 
     /**
-     * 파일에서 예약 데이터를 불러옵니다.
+     * UTF-8 형식으로 파일에서 예약 데이터를 불러옵니다.
      * 
      * @param filePath 불러올 파일 경로
      */
@@ -276,7 +282,7 @@ public class FinalTest {
             return;
         }
 
-        try (BufferedReader reader = new BufferedReader(new FileReader(file))) {
+        try (BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(file), "UTF-8"))) {
             reservations.clear();
             String line;
             while ((line = reader.readLine()) != null) {
@@ -295,7 +301,7 @@ public class FinalTest {
             }
             JOptionPane.showMessageDialog(frame, "파일에서 예약 정보를 불러왔습니다.");
         } catch (IOException e) {
-            JOptionPane.showMessageDialog(frame, "파일 읽기 중 오류가 발생했습니다.");
+            JOptionPane.showMessageDialog(frame, "파일 읽기 중 오류가 발생했습니다: " + e.getMessage());
         }
     }
 
