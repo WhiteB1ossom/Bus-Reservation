@@ -4,7 +4,10 @@ import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.GridLayout;
 import java.awt.Insets;
+import java.io.BufferedReader;
 import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -63,10 +66,13 @@ public class FinalTest {
      * @param args 실행 시 전달되는 명령줄 인수
      */
     public FinalTest() {
+    	
+    	// 파일에서 예약 정보 불러오기
+    	
         // GUI 창 설정
         frame = new JFrame("버스 좌석 예약 시스템");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.setSize(600, 800);
+        frame.setSize(450, 800);
         frame.setLayout(new BorderLayout());
         
         // 하단 버튼 패널 생성
@@ -121,6 +127,8 @@ public class FinalTest {
         frame.add(new JLabel("버스 좌석 상태 (클릭하여 예약/취소)"), BorderLayout.NORTH);
         frame.add(seatPanel, BorderLayout.CENTER);
 
+//    	loadReservationsFromFile(seatButtons);
+        
         // GUI 표시 및 하단 컨트롤 패널 추가
         frame.add(controlPanel, BorderLayout.SOUTH);
         frame.setVisible(true);
@@ -234,6 +242,44 @@ public class FinalTest {
             JOptionPane.showMessageDialog(frame, "파일 저장 중 오류가 발생했습니다: " + e.getMessage());
         }
     }
+    
+//    private static void loadReservationsFromFile(List<JButton> seatButtons) {
+//        File file = new File(FILE_NAME);
+//        if (!file.exists()) {
+//            System.out.println("예약 파일이 존재하지 않습니다.");
+//            return;
+//        }
+//
+//        try (BufferedReader reader = new BufferedReader(new FileReader(file))) {
+//            String line;
+//            while ((line = reader.readLine()) != null) {
+//                try {
+//                    String[] parts = line.split(", ");
+//                    if (parts.length >= 4) {
+//                        int seatNumber = Integer.parseInt(parts[0].split(": ")[1]);
+//                        String reservationInfo = String.format("%s, %s, %s",
+//                            parts[1], parts[2], parts[3]); // 학번, 이름, 전화번호 조합
+//
+//                        // HashMap에 저장
+//                        reservations.put(seatNumber, reservationInfo);
+//
+//                        // 버튼 상태 업데이트
+//                        for (JButton button : seatButtons) {
+//                            if (button.getText().equals(String.valueOf(seatNumber))) {
+//                                updateButtonStatus(button, true, seatNumber);
+//                            }
+//                        }
+//                    }
+//                } catch (Exception e) {
+//                    System.out.println("잘못된 형식의 데이터: " + line);
+//                }
+//            }
+//            System.out.println("예약 정보 로드 완료.");
+//        } catch (IOException e) {
+//            System.out.println("파일 읽기 오류 발생: " + e.getMessage());
+//        }
+//    }
+
 
     /**
      * 메인 메서드로 GUI를 실행합니다.
