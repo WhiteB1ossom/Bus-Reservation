@@ -49,9 +49,8 @@ import javax.swing.JTextField;
  *   <li>2024-12-24: 전화번호 입력 필드 추가 및 정보 입력 UI 개선</li>
  *   <li>2024-12-24: 예약 자동 불러오기 기능 구현</li>
  *   <li>2024-12-24: 파일 저장 형식을 CSV로 변경</li>
- *   <li>2024-12-24: 불러오기 버튼 제거 및 자동 불러오기 구현</li>
+ *   <li>2024-12-25: 좌석 상태 변경 시 자동 저장 기능 추가</li>
  * </ul>
- * 
  * @see <a href="https://steffen-lee.tistory.com/27"> 전체적인 기능 참조</a>
  * 
  * @see <a href="https://dev-zephyr.tistory.com/8"> 예약 시스템 구축 참조링크1</a>
@@ -89,7 +88,7 @@ public class FinalTest {
      * 프로그램 초기화 및 GUI 설정
      */
     public FinalTest() {
-        // 메인 프레임 설정
+        // JFrame 설정
         frame = new JFrame("버스 좌석 예약 시스템");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setSize(450, 800);
@@ -98,47 +97,43 @@ public class FinalTest {
         BackgroundPanel backgroundPanel = new BackgroundPanel(BACKGROUND_IMAGE);
         backgroundPanel.setLayout(new BorderLayout());
 
-        // 상단 텍스트 레이블 추가
+        // 상단 텍스트 레이블
         JLabel headerLabel = new JLabel("버스 좌석 상태 (클릭하여 예약/취소)", JLabel.CENTER);
         headerLabel.setFont(new Font("맑은 고딕", Font.BOLD, 16));
         headerLabel.setForeground(Color.BLACK);
 
-        // 좌석 패널 생성
+        // 좌석 배치 패널 생성
         JPanel seatPanel = createSeatPanel();
 
-        // 하단 버튼 패널 생성
+        // 하단 버튼 패널
         JPanel controlPanel = new JPanel();
         controlPanel.setOpaque(false); // 배경 투명화
-        JButton saveButton = new JButton("저장");
         JButton exitButton = new JButton("종료");
 
-        // 저장 버튼 이벤트 처리
-        saveButton.addActionListener(e -> saveReservationsToFile());
-
-        // 종료 버튼 이벤트 처리
+        // 버튼 이벤트 설정
         exitButton.addActionListener(e -> System.exit(0));
 
-        // 버튼 패널에 버튼 추가
-        controlPanel.add(saveButton);
+        // 버튼 추가
         controlPanel.add(exitButton);
 
-        // 전체 패널 레이아웃에 구성 요소 추가
+        // 구성 요소 추가
         backgroundPanel.add(headerLabel, BorderLayout.NORTH);
         backgroundPanel.add(seatPanel, BorderLayout.CENTER);
         backgroundPanel.add(controlPanel, BorderLayout.SOUTH);
 
-        // 파일로부터 예약 데이터 불러오기
+        // JFrame에 배경 패널 설정
+        frame.setContentPane(backgroundPanel);
+
+        // 자동 파일 로드 호출
         loadReservationsFromFile(FILE_NAME);
 
-        // 프레임에 패널 설정
-        frame.setContentPane(backgroundPanel);
         frame.setVisible(true);
     }
 
     /**
-     * 좌석 패널을 생성합니다.
+     * 좌석 배치 패널을 생성합니다.
      * 
-     * @return 좌석 패널
+     * @return 좌석 배치 패널
      */
     private JPanel createSeatPanel() {
         JPanel seatPanel = new JPanel(new GridLayout(9, 1, 10, 10));
@@ -147,20 +142,18 @@ public class FinalTest {
         int seatCounter = 1;
         for (int row = 0; row < 9; row++) {
             JPanel rowPanel = new JPanel(new GridLayout(1, 5, 10, 10));
-            rowPanel.setOpaque(false);
+            rowPanel.setOpaque(false); // 배경 투명화
 
             for (int col = 0; col < 5; col++) {
                 if (col == 2) {
-                    rowPanel.add(new JLabel()); // 통로
+                    rowPanel.add(new JLabel()); // 중앙 통로
                 } else {
                     JButton seatButton = new JButton(String.valueOf(seatCounter));
                     seatButtons.add(seatButton);
                     rowPanel.add(seatButton);
 
-                    // 초기 버튼 상태 업데이트
                     updateButtonStatus(seatButton, false, seatCounter);
 
-                    // 버튼 클릭 이벤트 처리
                     int seatNumber = seatCounter;
                     seatButton.addActionListener(e -> handleSeatClick(seatNumber, seatButton));
 
@@ -174,27 +167,27 @@ public class FinalTest {
     }
 
     /**
-     * 좌석 버튼 클릭 이벤트 처리
+     * 좌석 버튼을 클릭했을 때 예약 또는 취소 동작을 처리합니다.
      * 
      * @param seatNumber 좌석 번호
-     * @param seatButton 해당 좌석 버튼 객체
+     * @param seatButton 좌석에 해당하는 버튼 객체
      */
     private void handleSeatClick(int seatNumber, JButton seatButton) {
         if (reservations.containsKey(seatNumber)) {
-            // 예약 취소 확인
             String reservationInfo = reservations.get(seatNumber);
             int confirm = JOptionPane.showConfirmDialog(frame,
                     "좌석 " + seatNumber + "번 예약(" + reservationInfo + ")을 취소하시겠습니까?",
                     "예약 취소", JOptionPane.YES_NO_OPTION);
 
             if (confirm == JOptionPane.YES_OPTION) {
-                // 예약 취소 처리
                 reservations.remove(seatNumber);
                 updateButtonStatus(seatButton, false, seatNumber);
                 JOptionPane.showMessageDialog(frame, "예약이 취소되었습니다.");
+
+                // 상태 변경 후 자동 저장
+                saveReservationsToFile();
             }
         } else {
-            // 예약 정보 입력 UI 생성
             JPanel inputPanel = new JPanel(new GridBagLayout());
             GridBagConstraints gbc = new GridBagConstraints();
             gbc.insets = new Insets(5, 5, 5, 5);
@@ -235,11 +228,13 @@ public class FinalTest {
                     return;
                 }
 
-                // 예약 정보 저장
                 String reservationInfo = String.format("%s,%s,%s", studentId, name, phone);
                 reservations.put(seatNumber, reservationInfo);
                 updateButtonStatus(seatButton, true, seatNumber);
                 JOptionPane.showMessageDialog(frame, "좌석이 예약되었습니다.");
+
+                // 상태 변경 후 자동 저장
+                saveReservationsToFile();
             }
         }
     }
@@ -248,7 +243,7 @@ public class FinalTest {
      * 버튼 상태를 좌석 예약 여부에 따라 업데이트합니다.
      * 
      * @param button 좌석 버튼 객체
-     * @param reserved 예약 여부
+     * @param reserved 좌석 예약 여부
      * @param seatNumber 좌석 번호
      */
     private void updateButtonStatus(JButton button, boolean reserved, int seatNumber) {
@@ -264,7 +259,7 @@ public class FinalTest {
     }
 
     /**
-     * 예약 데이터를 CSV 파일로 저장합니다.
+     * 예약 데이터를 CSV 형식으로 파일에 저장합니다.
      */
     private void saveReservationsToFile() {
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(FILE_NAME))) {
@@ -272,14 +267,13 @@ public class FinalTest {
                 writer.write(entry.getKey() + "," + entry.getValue());
                 writer.newLine();
             }
-            JOptionPane.showMessageDialog(frame, "예약 정보가 저장되었습니다.");
         } catch (IOException e) {
             JOptionPane.showMessageDialog(frame, "파일 저장 중 오류가 발생했습니다: " + e.getMessage());
         }
     }
 
     /**
-     * CSV 파일에서 예약 데이터를 불러옵니다.
+     * CSV 형식으로 파일에서 예약 데이터를 불러옵니다.
      * 
      * @param filePath 불러올 파일 경로
      */
@@ -309,7 +303,7 @@ public class FinalTest {
     }
 
     /**
-     * 배경 이미지를 표시하는 패널 클래스
+     * 배경 이미지를 그리는 패널 클래스
      */
     static class BackgroundPanel extends JPanel {
         private Image backgroundImage;
@@ -332,7 +326,7 @@ public class FinalTest {
     }
 
     /**
-     * 메인 메서드로 프로그램 실행
+     * 메인 메서드로 GUI를 프로그램 실행.
      */
     public static void main(String[] args) {
         FinalTest app = new FinalTest();
