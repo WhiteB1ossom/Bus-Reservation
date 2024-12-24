@@ -10,11 +10,9 @@ import java.awt.Insets;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
+import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.OutputStreamWriter;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -22,7 +20,6 @@ import java.util.Map;
 
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
-import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
@@ -32,18 +29,17 @@ import javax.swing.JTextField;
 /**
  * 버스 좌석 예약 시스템
  * <p>
- * GUI를 통해 좌석을 예약하거나 취소할 수 있으며, 예약 데이터를 HashMap에 저장합니다.
- *
+ * GUI를 통해 좌석을 예약하거나 취소할 수 있으며, 예약 데이터를 HashMap에 저장하고,
+ * CSV 파일 형식으로 자동 불러오기 및 저장할 수 있습니다.
  * </p>
  * 
  * @author 2021011877 방 경식
- * @version 1.4.1
+ * @version 1.6.1
  * @since 2024-12-16
  * 
  * @created 2024-12-16
  * 
  * @changelog
- * <ul>
  * <ul>
  *   <li>2024-12-16: 시스템 초기 구현</li>
  *   <li>2024-12-21: 시스템 외관 구현</li>
@@ -51,30 +47,18 @@ import javax.swing.JTextField;
  *   <li>2024-12-22: 예약 시스템을 HashMap으로 저장하도록 기능 확장</li>
  *   <li>2024-12-24: 예약 정보를 파일로 저장하는 기능 추가</li>
  *   <li>2024-12-24: 전화번호 입력 필드 추가 및 정보 입력 UI 개선</li>
- *   <li>2024-12-24: 예약 불러오기 기능 구현</li>
- *   <li>2024-12-24: 전체 배경 이미지 추가 및 UI 개선</li>
- *   <li>2024-12-24: UTF-8 인코딩 지원 추가</li>
+ *   <li>2024-12-24: 예약 자동 불러오기 기능 구현</li>
+ *   <li>2024-12-25: 파일 저장 형식을 CSV로 변경</li>
+ *   <li>2024-12-25: 불러오기 버튼 제거 및 자동 불러오기 구현</li>
  * </ul>
- * @see <a href="https://steffen-lee.tistory.com/27"> 전체적인 기능 참조</a>
- * 
- * @see <a href="https://dev-zephyr.tistory.com/8"> 예약 시스템 구축 참조링크1</a>
- * @see <a href="https://cross-milestone.tistory.com/100"> 예약 시스템 구축 참조링크2</a>
- * @see <a href="https://zombiecoder.tistory.com/10"> 예약 시스템 구축 참조링크3</a>
- * 
- * @see <a href="https://ming9mon.tistory.com/47"> GUI 업데이트 참조링크1</a>
- * @see <a href="https://m.blog.naver.com/ddalgikhj/222098797984"> GUI 업데이트 참조링크2</a>
- * 
- * @see <a href="https://velog.io/@kkj53051000/JAVASwing-JFileChooser-%ED%8C%8C%EC%9D%BC-%EC%97%B4%EA%B8%B0%EC%B0%BD-%EA%B5%AC%ED%98%84-%EB%B0%8F-%EA%B2%BD%EB%A1%9C-%EC%B6%9C%EB%A0%A5"> 파일 저장 및 불러오기 기능 참조링크1</a>
- * @see <a href="https://blog.naver.com/battledocho/220035925900">  파일 저장 및 불러오기 기능 참조링크2</a>
- * 
  */
 public class FinalTest {
 
     /** 총 좌석 수 */
     private static final int TOTAL_SEATS = 45;
 
-    /** 예약 데이터를 저장할 기본 파일 이름 */
-    private static final String FILE_NAME = "reservations.txt";
+    /** 예약 데이터를 저장할 기본 파일 이름 (CSV 형식) */
+    private static final String FILE_NAME = "reservations.csv";
 
     /** 배경 이미지 파일 경로 */
     private static final String BACKGROUND_IMAGE = "CJU.png";
@@ -113,24 +97,14 @@ public class FinalTest {
         JPanel controlPanel = new JPanel();
         controlPanel.setOpaque(false); // 배경 투명화
         JButton saveButton = new JButton("저장");
-        JButton loadButton = new JButton("불러오기");
         JButton exitButton = new JButton("종료");
 
         // 버튼 이벤트 설정
         saveButton.addActionListener(e -> saveReservationsToFile());
-        loadButton.addActionListener(e -> {
-            JFileChooser fileChooser = new JFileChooser();
-            int returnValue = fileChooser.showOpenDialog(frame);
-            if (returnValue == JFileChooser.APPROVE_OPTION) {
-                File selectedFile = fileChooser.getSelectedFile();
-                loadReservationsFromFile(selectedFile.getPath());
-            }
-        });
         exitButton.addActionListener(e -> System.exit(0));
 
         // 버튼 추가
         controlPanel.add(saveButton);
-        controlPanel.add(loadButton);
         controlPanel.add(exitButton);
 
         // 구성 요소 추가
@@ -140,6 +114,10 @@ public class FinalTest {
 
         // JFrame에 배경 패널 설정
         frame.setContentPane(backgroundPanel);
+
+        // 자동 파일 로드 호출
+        loadReservationsFromFile(FILE_NAME);
+
         frame.setVisible(true);
     }
 
@@ -238,7 +216,7 @@ public class FinalTest {
                     return;
                 }
 
-                String reservationInfo = String.format("학번: %s 이름: %s 전화번호: %s", studentId, name, phone);
+                String reservationInfo = String.format("%s,%s,%s", studentId, name, phone);
                 reservations.put(seatNumber, reservationInfo);
                 updateButtonStatus(seatButton, true, seatNumber);
                 JOptionPane.showMessageDialog(frame, "좌석이 예약되었습니다.");
@@ -266,13 +244,12 @@ public class FinalTest {
     }
 
     /**
-     * 예약 데이터를 UTF-8 형식으로 파일에 저장합니다.
+     * 예약 데이터를 CSV 형식으로 파일에 저장합니다.
      */
     private void saveReservationsToFile() {
-        try (BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(FILE_NAME), "UTF-8"))) {
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter(FILE_NAME))) {
             for (Map.Entry<Integer, String> entry : reservations.entrySet()) {
-                String formattedData = String.format("좌석번호: %d, %s", entry.getKey(), entry.getValue());
-                writer.write(formattedData);
+                writer.write(entry.getKey() + "," + entry.getValue());
                 writer.newLine();
             }
             JOptionPane.showMessageDialog(frame, "예약 정보가 저장되었습니다.");
@@ -282,35 +259,30 @@ public class FinalTest {
     }
 
     /**
-     * UTF-8 형식으로 파일에서 예약 데이터를 불러옵니다.
+     * CSV 형식으로 파일에서 예약 데이터를 불러옵니다.
      * 
      * @param filePath 불러올 파일 경로
      */
     private void loadReservationsFromFile(String filePath) {
         File file = new File(filePath);
-        if (!file.exists()) {
-            JOptionPane.showMessageDialog(frame, "파일이 존재하지 않습니다: " + filePath);
-            return;
-        }
+        if (!file.exists()) return;
 
-        try (BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(file), "UTF-8"))) {
+        try (BufferedReader reader = new BufferedReader(new FileReader(file))) {
             reservations.clear();
             String line;
             while ((line = reader.readLine()) != null) {
-                String[] parts = line.split(", ");
-                if (parts.length >= 4) {
-                    int seatNumber = Integer.parseInt(parts[0].split(": ")[1]);
-                    String reservationInfo = String.format("%s, %s, %s", parts[1], parts[2], parts[3]);
+                String[] parts = line.split(",");
+                if (parts.length == 4) {
+                    int seatNumber = Integer.parseInt(parts[0]);
+                    String reservationInfo = String.format("%s,%s,%s", parts[1], parts[2], parts[3]);
 
                     reservations.put(seatNumber, reservationInfo);
-                    for (JButton button : seatButtons) {
-                        if (button.getText().equals(String.valueOf(seatNumber))) {
-                            updateButtonStatus(button, true, seatNumber);
-                        }
+                    if (seatNumber >= 1 && seatNumber <= TOTAL_SEATS) {
+                        JButton button = seatButtons.get(seatNumber - 1);
+                        updateButtonStatus(button, true, seatNumber);
                     }
                 }
             }
-            JOptionPane.showMessageDialog(frame, "파일에서 예약 정보를 불러왔습니다.");
         } catch (IOException e) {
             JOptionPane.showMessageDialog(frame, "파일 읽기 중 오류가 발생했습니다: " + e.getMessage());
         }
@@ -343,6 +315,6 @@ public class FinalTest {
      * 메인 메서드로 GUI를 실행합니다.
      */
     public static void main(String[] args) {
-        new FinalTest();
+        FinalTest app = new FinalTest();
     }
 }
