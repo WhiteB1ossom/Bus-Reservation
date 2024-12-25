@@ -26,7 +26,7 @@
 
 ### 3.1 클래스 다이어그램
 ```markdown
-![클래스 다이어그램](./class_diagram.png)
+![클래스 다이어그램](https://github.com/WhiteB1ossom/Bus-Reservation/blob/55f8857c81854ebc3cb8bec8e34335c452c27d41/class_diagram.png))
 ```
 ## 4. 느낀점
  - 셔틀 버스 예약 시스템을 구현해야겠다 생각한 이유는, 학교 커뮤니티에 새치기 및 혼잡성 등과 같은 문제점들이 주기적으로 제기되어서 구현하게 되었습니다.
