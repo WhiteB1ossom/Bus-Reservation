@@ -26,6 +26,8 @@
 
 ### 3.1 클래스 다이어그램
 ```markdown
-![클래스 다이어그램](./class_diagram.png)
+![클래스 다이어그램]
+(class_diagram.png)
+```
 
 ## 3. 느낀점
