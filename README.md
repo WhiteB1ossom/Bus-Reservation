@@ -24,7 +24,7 @@
 
 ## 3. 프로그램 수행 절차
 ### 3.1 클래스 다이어그램
-<img src="https://user-images.githubusercontent.com/51365114/119627750-716f3100-be47-11eb-8e83-686b23c2c161.png"/>
+<img src="https://github.com/WhiteB1ossom/Bus-Reservation/blob/main/class_diagram.png"/>
 
 ## 4. 느낀점
  - 셔틀 버스 예약 시스템을 구현해야겠다 생각한 이유는, 학교 커뮤니티에 새치기 및 혼잡성 등과 같은 문제점들이 주기적으로 제기되어서 구현하게 되었습니다.
