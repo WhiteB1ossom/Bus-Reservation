@@ -35,9 +35,10 @@ import javax.swing.JTextField;
  * 
  * @author 2021011877 ¹æ °æ½Ä
  * @version 1.6.0
- * @since 2024-12-16
+ * @since 1.0
  * 
  * @created 2024-12-16
+ * @lastModified 2024-12-25
  * 
  * @changelog
  * <ul>
